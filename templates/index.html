@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="archive-intro">
+    <div style="display: flex; justify-content: space-between; align-items: baseline; border-bottom: 2px solid #8b0000; padding-bottom: 10px; margin-bottom: 30px; font-family: 'Special Elite', cursive;">
+        <div><span style="color:#8b0000;">ФОНД:</span> 1941-1945</div>
+        <div><span style="color:#8b0000;">ОПИСЬ:</span> ГЛАВУПР</div>
+        <div><span style="color:#8b0000;">СТАТУС:</span> РАССЕКРЕЧЕНО</div>
+        <div style="font-size: 0.9rem;"><span style="color:#8b0000;">НАЧАЛЬНИК АРХИВА:</span> полковник И.В. Петров</div>
+    </div>
+
+    <h1 id="typewriter">ОГЛАВЛЕНИЕ АРХИВА</h1>
+
+    <p class="main-text" style="margin-top: 20px;">
+        <strong>Товарищ исследователь!</strong> Настоящим донесением открывается доступ к систематизированным материалам Великой Отечественной войны. Архив содержит оперативные сводки, личные дела и карты наступлений.
+    </p>
+
+    <div style="display: flex; gap: 20px; margin: 40px 0; font-family: 'Special Elite', cursive; text-align: center;">
+        <div style="flex:1; border-right: 2px dashed #bcaf92;">
+            <div style="display: inline-block; border: 2px solid #8b0000; border-radius: 50%; width: 70px; height: 70px; line-height: 70px; font-size: 2rem; color:#8b0000;">{{ operations_count }}</div>
+            <br>ОПЕРАЦИЙ
+        </div>
+        <div style="flex:1; border-right: 2px dashed #bcaf92;">
+            <div style="display: inline-block; border: 2px solid #8b0000; border-radius: 50%; width: 70px; height: 70px; line-height: 70px; font-size: 2rem; color:#8b0000;">{{ heroes_count }}</div>
+            <br>ГЕРОЕВ
+        </div>
+        <div style="flex:1;">
+            <div style="display: inline-block; border: 2px solid #8b0000; border-radius: 50%; width: 180px; height: 70px; line-height: 70px; font-size: 2rem; color:#8b0000;">1941-1945</div>
+            <br>ГОДЫ
+        </div>
+    </div>
+
+    <ul class="archive-toc">
+        <li class="{% if current_page == '/operations' %}active{% endif %}">
+            <a href="/operations" class="toc-link">
+                <span class="toc-num">I.</span>
+                <div class="toc-content">
+                    <h3>ВОЕННЫЕ ОПЕРАЦИИ</h3>
+                    <p>Полный список и детальная информация о ключевых сражениях Великой Отечественной войны.</p>
+                </div>
+            </a>
+        </li>
+        <li class="{% if current_page == '/reports' %}active{% endif %}">
+            <a href="/reports" class="toc-link">
+                <span class="toc-num">II.</span>
+                <div class="toc-content">
+                    <h3>СВОДКИ ИНФОРМБЮРО</h3>
+                    <p>Ежедневные отчёты о положении дел на всех участках фронта.</p>
+                </div>
+            </a>
+        </li>
+        <li class="{% if current_page == '/heroes' %}active{% endif %}">
+            <a href="/heroes" class="toc-link">
+                <span class="toc-num">III.</span>
+                <div class="toc-content">
+                    <h3>ЛИЧНЫЕ ДЕЛА ГЕРОЕВ</h3>
+                    <p>Биографии и наградные листы отличившихся воинов.</p>
+                </div>
+            </a>
+        </li>
+    </ul>
+
+    <div class="archive-footer" style="border: none; text-align: right; margin-top: 40px;">
+        <p style="font-family: 'Marck Script', cursive; font-size: 1.2rem;">полковник И.В. Петров</p>
+        <p>Дата: <span id="current-date"></span> /подпись/ __________</p>
+    </div>
+
+    <div class="stain" style="opacity: 0.1;"></div>
+</div>
+
+<style>
+    .archive-toc li { padding: 0; }
+    .toc-link { display: flex; align-items: flex-start; width: 100%; padding: 20px 0; text-decoration: none; color: inherit; }
+    .toc-link:hover { background-color: rgba(139, 0, 0, 0.1); }
+    .archive-toc li.active .toc-link { background-color: rgba(139, 0, 0, 0.2); border-left: 4px solid #8b0000; }
+    .archive-toc li.active .toc-num { color: #8b0000; font-weight: bold; }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const h1 = document.getElementById('typewriter');
+        if (h1) {
+            const text = h1.textContent;
+            h1.textContent = '';
+            let i = 0;
+            function type() {
+                if (i < text.length) {
+                    h1.textContent += text.charAt(i);
+                    i++;
+                    setTimeout(type, 80);
+                }
+            }
+            type();
+        }
+        const dateSpan = document.getElementById('current-date');
+        if (dateSpan) {
+            const d = new Date();
+            const day = String(d.getDate()).padStart(2, '0');
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            dateSpan.innerText = `${day}.${month}.1945`;
+        }
+    });
+</script>
+{% endblock %}

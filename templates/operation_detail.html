@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="report-content">
+    <div class="inventory-tag">ДЕЛО №{{ topic.id }}<br>СТАТУС: <span style="color:#8b0000;">СЕКРЕТНО</span></div>
+    <span class="topic-date">ДАТА: {{ topic.date }}</span>
+    <h1>{{ topic.title }}</h1>
+
+    {% if topic.images %}
+<div class="operation-gallery">
+    {% for img in topic.images %}
+    <div class="gallery-item">
+        <a href="{{ url_for('static', filename='images/' + img.filename) }}" target="_blank">
+            <img src="{{ url_for('static', filename='images/' + img.filename) }}" alt="{{ img.caption }}">
+        </a>
+        {% if img.caption %}
+        <p>{{ img.caption }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+    <div class="main-text">{{ topic.text | safe }}</div>
+    <div class="stain"></div>
+</div>
+
+<div id="lightbox-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:999; text-align:center;">
+    <span id="close-lightbox" style="position:absolute; top:20px; right:40px; color:white; font-size:40px; cursor:pointer;">&times;</span>
+    <img id="lightbox-image" src="" style="width:50%; height:auto; max-width:800px; margin-top:10vh;">
+</div>
+
+<script>
+    document.querySelectorAll('.gallery-item a').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            var imgSrc = this.href;
+            document.getElementById('lightbox-image').src = imgSrc;
+            document.getElementById('lightbox-modal').style.display = 'block';
+        });
+    });
+
+    document.getElementById('close-lightbox').addEventListener('click', function() {
+        document.getElementById('lightbox-modal').style.display = 'none';
+    });
+
+    document.getElementById('lightbox-modal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+</script>
+{% endblock %}

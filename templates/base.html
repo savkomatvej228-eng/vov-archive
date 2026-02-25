@@ -1,0 +1,39 @@
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Архив ВОВ - Оперативный Планшет</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="tablet-frame">
+        <aside class="sidebar">
+            <div class="sidebar-stamp">СЕКРЕТНО</div>
+            <h2>ОПЕРАТИВНЫЙ АРХИВ<br><small>ГЛАВНОЕ УПРАВЛЕНИЕ ГШ</small></h2>
+            <div class="archive-codes">
+                <span>ФОНД 504-ПБ</span>
+                <span>ОПИСЬ №14</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="/" class="home-link"><span class="nav-icon">📑</span> ОГЛАВЛЕНИЕ АРХИВА</a>
+                <div class="nav-divider"></div>
+                <a href="/operations" class="nav-link"><span class="nav-icon">⚔️</span> ВОЕННЫЕ ОПЕРАЦИИ</a>
+                <a href="/heroes" class="nav-link"><span class="nav-icon">🎖️</span> ГЕРОИ И ПОДВИГИ</a>
+                <a href="/reports" class="nav-link"><span class="nav-icon">📰</span> СВОДКИ ИНФОРМБЮРО</a>
+                <div class="nav-divider"></div>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="footer-row">
+                    <<img src="{{ url_for('static', filename='images/soviet_gerb.png') }}" width="30" style="opacity:0.5;">
+                    <div class="footer-text">ПРОВЕРЕНО: 21.02.45<br>ПОДПИСЬ:</div>
+                </div>
+                <div class="sidebar-signature">Major Polyakov</div>
+            </div>
+        </aside>
+        <main class="paper-sheet">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

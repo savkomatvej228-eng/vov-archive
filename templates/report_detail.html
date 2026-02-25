@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="report-content">
+    <div class="inventory-tag">СВОДКА №{{ report.id }}<br>ДАТА: {{ report.date }}</div>
+    <h1>{{ report.title }}</h1>
+    <div class="main-text">{{ report.text | safe }}</div>
+    <div class="stain"></div>
+</div>
+{% endblock %}

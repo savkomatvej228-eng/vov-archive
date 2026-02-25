@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="report-content">
+    <div class="inventory-tag">ЛИЧНОЕ ДЕЛО №{{ hero.id }}<br>СТАТУС: РАССЕКРЕЧЕНО</div>
+    <span class="topic-date">ГЕРОЙ СОВЕТСКОГО СОЮЗА</span>
+    <h1>{{ hero.name }}</h1>
+
+    {% if hero.image %}
+    <div style="text-align: center; margin: 30px 0;">
+        <img src="{{ url_for('static', filename='images/' + hero.image) }}" alt="{{ hero.name }}" style="max-width: 100%; height: auto; border: 5px solid #4f3f2e; box-shadow: 5px 5px 15px rgba(0,0,0,0.3);">
+    </div>
+    {% endif %}
+
+    <div class="main-text">{{ hero.text | safe }}</div>
+    <div class="stain"></div>
+</div>
+{% endblock %}

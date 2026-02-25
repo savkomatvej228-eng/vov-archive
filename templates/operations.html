@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="archive-intro">
+    <div class="inventory-tag">РАЗДЕЛ: ВОЕННЫЕ ОПЕРАЦИИ<br>СТАТУС: РАССЕКРЕЧЕНО</div>
+    <h1>ВОЕННЫЕ ОПЕРАЦИИ</h1>
+    <ul class="archive-toc">
+        {% for op in topics %}
+        <li>
+            <a href="/topic/{{ op.id }}" class="toc-link">
+                <span class="toc-num">{{ loop.index }}.</span>
+                <div class="toc-content">
+                    <h3>{{ op.title }}</h3>
+                    <p>{{ op.date }}</p>
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="stain"></div>
+</div>
+{% endblock %}

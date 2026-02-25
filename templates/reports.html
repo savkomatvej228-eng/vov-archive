@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="archive-intro">
+    <div class="inventory-tag">РАЗДЕЛ: СВОДКИ ИНФОРМБЮРО<br>СТАТУС: РАССЕКРЕЧЕНО</div>
+    <h1>СВОДКИ С ФРОНТОВ</h1>
+    <ul class="archive-toc">
+        {% for report in reports %}
+        <li>
+            <a href="/report/{{ report.id }}" class="toc-link">
+                <span class="toc-num">{{ loop.index }}.</span>
+                <div class="toc-content">
+                    <h3>{{ report.title }}</h3>
+                    <p>{{ report.date }}</p>
+                </div>
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    <div class="stain"></div>
+</div>
+{% endblock %}
