@@ -1,9 +1,22 @@
-from flask import Flask, render_template, abort, request
+from flask import Flask, render_template, abort, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ww2_archive.db'
+
+# ---------- Настройка базы данных ----------
+# Приоритет: переменная окружения DATABASE_URL (для PostgreSQL)
+# Если её нет, используем SQLite для локальной разработки
+POSTGRES_URL = os.environ.get("DATABASE_URL")
+if POSTGRES_URL and POSTGRES_URL.startswith("postgres://"):
+    # Render иногда даёт строку postgres://, но SQLAlchemy требует postgresql://
+    POSTGRES_URL = POSTGRES_URL.replace("postgres://", "postgresql://", 1)
+
+if POSTGRES_URL:
+    app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_URL
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ww2_archive.db'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
@@ -52,7 +65,9 @@ def inject_current_page():
 def home():
     operations_count = Topic.query.count()
     heroes_count = Hero.query.count()
-    return render_template('index.html', operations_count=operations_count, heroes_count=heroes_count)
+    return render_template('index.html',
+                           operations_count=operations_count,
+                           heroes_count=heroes_count)
 
 @app.route('/operations')
 def operations_list():
@@ -90,10 +105,24 @@ def report_detail(report_id):
         abort(404)
     return render_template('report_detail.html', report=report)
 
+# ----- ЭНДПОИНТ ДЛЯ UPTIMEROBOT (НЕ ДАЁМ САЙТУ ЗАСНУТЬ) -----
+@app.route('/health')
+def health_check():
+    return 'OK', 200
+
+# ----- КЭШИРОВАНИЕ СТАТИКИ (ОПЦИОНАЛЬНО, ДЛЯ УСКОРЕНИЯ) -----
+@app.route('/static/<path:filename>')
+def custom_static(filename):
+    response = send_from_directory(app.static_folder, filename)
+    # Кэшировать на 1 час
+    response.headers['Cache-Control'] = 'public, max-age=3600'
+    return response
+
+# ----- ЗАПУСК ПРИЛОЖЕНИЯ -----
 if __name__ == '__main__':
-    # Создаём таблицы, если их нет
     with app.app_context():
-        db.create_all()
-    # Для Render: берём порт из окружения, по умолчанию 5000
+        db.create_all()          # создаём таблицы, если их нет
+    # Render передаёт порт в переменной окружения PORT
     port = int(os.environ.get('PORT', 5000))
+    # Обязательно host='0.0.0.0' для доступа извне
     app.run(host='0.0.0.0', port=port)
