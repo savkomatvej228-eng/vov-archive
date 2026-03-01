@@ -5,11 +5,11 @@ import os
 app = Flask(__name__)
 
 # ---------- Настройка базы данных ----------
-# Приоритет: переменная окружения DATABASE_URL (для PostgreSQL)
-# Если её нет, используем SQLite для локальной разработки
+# Используем переменную окружения DATABASE_URL (для Render)
+# Если её нет — подключаем SQLite (локальная разработка)
 POSTGRES_URL = os.environ.get("DATABASE_URL")
 if POSTGRES_URL and POSTGRES_URL.startswith("postgres://"):
-    # Render иногда даёт строку postgres://, но SQLAlchemy требует postgresql://
+    # Render иногда выдаёт postgres://, но SQLAlchemy требует postgresql://
     POSTGRES_URL = POSTGRES_URL.replace("postgres://", "postgresql://", 1)
 
 if POSTGRES_URL:
@@ -54,6 +54,11 @@ class Report(db.Model):
     title = db.Column(db.String(200), nullable=False)
     date = db.Column(db.String(50), nullable=False)
     text = db.Column(db.Text, nullable=False)
+
+# ----- СОЗДАНИЕ ТАБЛИЦ ПРИ СТАРТЕ (ВАЖНО ДЛЯ RENDER) -----
+with app.app_context():
+    db.create_all()
+    print("✅ Таблицы созданы (если их не было)")
 
 # ----- КОНТЕКСТНЫЙ ПРОЦЕССОР -----
 @app.context_processor
@@ -110,19 +115,15 @@ def report_detail(report_id):
 def health_check():
     return 'OK', 200
 
-# ----- КЭШИРОВАНИЕ СТАТИКИ (ОПЦИОНАЛЬНО, ДЛЯ УСКОРЕНИЯ) -----
+# ----- КЭШИРОВАНИЕ СТАТИКИ (ДЛЯ УСКОРЕНИЯ ЗАГРУЗКИ ФОТО) -----
 @app.route('/static/<path:filename>')
 def custom_static(filename):
     response = send_from_directory(app.static_folder, filename)
-    # Кэшировать на 1 час
+    # Кэшировать на 1 час (3600 секунд)
     response.headers['Cache-Control'] = 'public, max-age=3600'
     return response
 
-# ----- ЗАПУСК ПРИЛОЖЕНИЯ -----
+# ----- ЗАПУСК ПРИЛОЖЕНИЯ (ТОЛЬКО ДЛЯ ЛОКАЛЬНОЙ РАЗРАБОТКИ) -----
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()          # создаём таблицы, если их нет
-    # Render передаёт порт в переменной окружения PORT
     port = int(os.environ.get('PORT', 5000))
-    # Обязательно host='0.0.0.0' для доступа извне
     app.run(host='0.0.0.0', port=port)
