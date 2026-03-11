@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 folium
 gunicorn
+psycopg2-binary
