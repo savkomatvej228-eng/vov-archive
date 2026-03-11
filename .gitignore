@@ -7,5 +7,4 @@ instance/
 build/
 dist/
 *.spec
-*.exe
 start_site.bat
