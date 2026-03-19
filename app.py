@@ -2,18 +2,14 @@ from flask import Flask, render_template, abort, request, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 import os
 import sys
-import webbrowser
-import threading
 
 app = Flask(__name__)
 
-# ---------- Определяем путь к базе данных ----------
-if getattr(sys, 'frozen', False):
-    base_path = os.path.dirname(sys.executable)
-else:
-    base_path = os.path.dirname(os.path.abspath(__file__))
-
+# ---------- Настройка путей для базы данных ----------
+# На сервере Render база будет лежать в той же папке, что и код.
+base_path = os.path.dirname(os.path.abspath(__file__))
 db_path = os.path.join(base_path, 'ww2_archive.db')
+
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{db_path}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
@@ -53,7 +49,7 @@ class Report(db.Model):
     date = db.Column(db.String(50), nullable=False)
     text = db.Column(db.Text, nullable=False)
 
-# ----- СОЗДАНИЕ ТАБЛИЦ (ЕСЛИ ИХ НЕТ) -----
+# ----- ИНИЦИАЛИЗАЦИЯ БД -----
 with app.app_context():
     db.create_all()
 
@@ -111,9 +107,9 @@ def report_detail(report_id):
 def custom_static(filename):
     return send_from_directory(app.static_folder, filename)
 
-# ----- ЗАПУСК -----
+# ----- ЗАПУСК (ДЛЯ RENDER) -----
 if __name__ == '__main__':
-    
-    port = int(os.environ.get("PORT", 5000)
-               
+    # Слушаем порт, который дает Render, или 5000 по умолчанию
+    port = int(os.environ.get("PORT", 5000))
+    # Хост 0.0.0.0 открывает доступ снаружи
     app.run(host='0.0.0.0', port=port)
